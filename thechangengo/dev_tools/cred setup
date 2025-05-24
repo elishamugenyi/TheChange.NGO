@@ -1,0 +1,23 @@
+import bcrypt from "bcryptjs";
+
+// generateHash.js
+// const bcrypt = require('bcrypt');
+// const password = 'password';
+// const saltRounds = 10; // Standard salt rounds
+
+// const hash = bcrypt.hashSync("password", 10);
+
+// console.log("Bcrypt Hash:", hash);
+// bcrypt.hash(password, saltRounds, function(err, hash) {
+//     if (err) {
+//         console.error("Error hashing password:", err);
+//         return;
+//     }
+//     console.log("Password:", password);
+//     console.log("Bcrypt Hash:", hash);
+// });
+
+
+// Hash =  $2a$10$0Ewa2hPuNk7FNrYw5.r2DeuCjSeO398VzzxTPeOCuqJpHRV7bbRCO
+
+// https://bcrypt-generator.com/

@@ -1,0 +1,74 @@
+-- Replace this with the actual bcrypt hash of "password"
+-- Example: const hashedPassword = await bcrypt.hash('password', 10);
+-- Then use that hashedPassword string below.
+-- DO NOT USE THIS FAKE HASH IN PRODUCTION.
+DO $$
+DECLARE
+    v_password_hash TEXT := '$2a$10$0Ewa2hPuNk7FNrYw5.r2DeuCjSeO398VzzxTPeOCuqJpHRV7bbRCO'; -- <<< REPLACE THIS FAKE HASH!
+    v_user_id BIGINT;
+BEGIN
+
+    -- God Mode User
+    INSERT INTO public.user_credentials (user_name, password_hash, role, account_status)
+    VALUES ('godmode_user', v_password_hash, 'God Mode'::role_type, 'Active'::account_status_type)
+    RETURNING id INTO v_user_id;
+    INSERT INTO public.user_profiles (user_id, title, email, first_name, last_name, gender)
+    VALUES (v_user_id, 'Mr'::title_type, 'godmode@example.com', 'God', 'ModeUser', 'Male'::gender_type);
+
+    -- Administrator User
+    INSERT INTO public.user_credentials (user_name, password_hash, role, account_status)
+    VALUES ('admin_user', v_password_hash, 'Administrator'::role_type, 'Active'::account_status_type)
+    RETURNING id INTO v_user_id;
+    INSERT INTO public.user_profiles (user_id, title, email, first_name, last_name, gender)
+    VALUES (v_user_id, 'Mrs'::title_type, 'admin@example.com', 'Admin', 'Istrator', 'Female'::gender_type);
+
+    -- Developer User
+    INSERT INTO public.user_credentials (user_name, password_hash, role, account_status)
+    VALUES ('dev_user', v_password_hash, 'Developer'::role_type, 'Active'::account_status_type)
+    RETURNING id INTO v_user_id;
+    INSERT INTO public.user_profiles (user_id, title, email, first_name, last_name, gender)
+    VALUES (v_user_id, 'Mr'::title_type, 'developer@example.com', 'Dev', 'Eloper', 'Male'::gender_type);
+
+    -- Moderator User
+    INSERT INTO public.user_credentials (user_name, password_hash, role, account_status)
+    VALUES ('mod_user', v_password_hash, 'Moderator'::role_type, 'Active'::account_status_type)
+    RETURNING id INTO v_user_id;
+    INSERT INTO public.user_profiles (user_id, title, email, first_name, last_name, gender)
+    VALUES (v_user_id, 'Miss'::title_type, 'moderator@example.com', 'Mod', 'Erator', 'Female'::gender_type);
+
+    -- Test User (Male)
+    INSERT INTO public.user_credentials (user_name, password_hash, role, account_status)
+    VALUES ('test_user_male', v_password_hash, 'Test User'::role_type, 'Active'::account_status_type)
+    RETURNING id INTO v_user_id;
+    INSERT INTO public.user_profiles (user_id, title, email, first_name, last_name, gender)
+    VALUES (v_user_id, 'Mr'::title_type, 'testmale@example.com', 'Test', 'UserMale', 'Male'::gender_type);
+
+    -- Test User (Female)
+    INSERT INTO public.user_credentials (user_name, password_hash, role, account_status)
+    VALUES ('test_user_female', v_password_hash, 'Test User'::role_type, 'Active'::account_status_type)
+    RETURNING id INTO v_user_id;
+    INSERT INTO public.user_profiles (user_id, title, email, first_name, last_name, gender)
+    VALUES (v_user_id, 'Mrs'::title_type, 'testfemale@example.com', 'Testa', 'UserFemale', 'Female'::gender_type);
+
+    -- Organization User
+    INSERT INTO public.user_credentials (user_name, password_hash, role, account_status)
+    VALUES ('org_user', v_password_hash, 'Organization User'::role_type, 'Pending Verification'::account_status_type)
+    RETURNING id INTO v_user_id;
+    INSERT INTO public.user_profiles (user_id, title, email, first_name, last_name, gender, organization)
+    VALUES (v_user_id, 'Doc'::title_type, 'orguser@example.com', 'Org', 'User', 'Male'::gender_type, 'Sample Org');
+
+    -- Donor User
+    INSERT INTO public.user_credentials (user_name, password_hash, role, account_status)
+    VALUES ('donor_user', v_password_hash, 'Donor'::role_type, 'Active'::account_status_type)
+    RETURNING id INTO v_user_id;
+    INSERT INTO public.user_profiles (user_id, title, email, first_name, last_name, gender)
+    VALUES (v_user_id, 'Prof'::title_type, 'donor@example.com', 'Don', 'Orr', 'Female'::gender_type);
+
+    -- Regular User
+    INSERT INTO public.user_credentials (user_name, password_hash, role, account_status)
+    VALUES ('regular_user', v_password_hash, 'User'::role_type, 'Active'::account_status_type)
+    RETURNING id INTO v_user_id;
+    INSERT INTO public.user_profiles (user_id, title, email, first_name, last_name, gender)
+    VALUES (v_user_id, 'Mr'::title_type, 'user@example.com', 'Reg', 'Ular', 'Male'::gender_type);
+
+END $$;
