@@ -1,8 +1,29 @@
+'use client';
+
 import Image from "next/image";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
+import { useAuthRedirect } from "./hooks/useAuthRedirect";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  useAuthRedirect();
+  //redirect to profile page if user clicks the donate or volunteer button
+  const router = useRouter();
+  const handleDonateClick = () => {
+    if (typeof window !== "undefined" && sessionStorage.getItem("token")) {
+      router.push("/profile");
+    } else {
+      router.push("/login");
+    }
+  };
+  const handleVolunteerClick = () => {
+    if (typeof window !== "undefined" && sessionStorage.getItem("token")) {
+      router.push("/profile");
+    } else {
+      router.push("/login");
+    }
+  };
   return (
     <div className="grid grid-rows-[auto_1fr_auto] items-center justify-items-center min-h-screen p-0 font-[family-name:var(--font-geist-sans)]">
       <Navbar />
@@ -31,12 +52,12 @@ export default function Home() {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row justify-center gap-6 p-8 sm:p-12 max-w-4xl mx-auto">
-          <button className="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105">
+          <button className="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105" onClick={handleDonateClick}>
             Donate Now
             <span className="block text-sm font-normal mt-1">Make a difference today</span>
           </button>
           
-          <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105">
+          <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105" onClick={handleVolunteerClick}>
             Volunteer With Us
             <span className="block text-sm font-normal mt-1">Join our community</span>
           </button>

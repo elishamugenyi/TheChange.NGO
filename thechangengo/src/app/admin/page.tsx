@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useAuthRedirect } from "../hooks/useAuthRedirect";
+import { jwtDecode } from "jwt-decode";
 
 const mockUsers = [
   { id: 1, fname: "John", mname: "A.", lname: "Doe", email: "john@example.com" },
@@ -28,6 +30,7 @@ const sidebarItems = [
 ];
 
 export default function AdminDashboard() {
+  useAuthRedirect("Administrator");
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [editForm, setEditForm] = useState<EditForm>({ fname: "", mname: "", lname: "" });
@@ -51,6 +54,11 @@ export default function AdminDashboard() {
     closeEditModal();
   };
 
+  const handleLogout = () => {
+    sessionStorage.removeItem("token");
+    window.location.href = "/";
+  };
+
   return (
     <div className="min-h-screen flex font-[family-name:var(--font-geist-sans)]">
       {/* Sidebar */}
@@ -63,6 +71,12 @@ export default function AdminDashboard() {
             </div>
           ))}
         </nav>
+        <button
+          className="m-4 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full shadow-lg transition-all"
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
       </aside>
 
       {/* Main Content */}
