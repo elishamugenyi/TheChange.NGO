@@ -1,0 +1,101 @@
+DROP TABLE IF EXISTS public.user_profiles;
+DROP TABLE IF EXISTS public.user_credentials;
+
+DROP TYPE IF EXISTS public.account_status_type;
+DROP TYPE IF EXISTS public.gender_type;
+DROP TYPE IF EXISTS public.role_type;
+DROP TYPE IF EXISTS public.title_type;
+
+DROP FUNCTION IF EXISTS public.trigger_set_timestamp();
+
+CREATE TYPE public.account_status_type AS ENUM (
+    'Active',
+    'Inactive',
+    'Disabled',
+    'Suspended',
+    'On Hold',
+    'Pending Verification',
+    'Deleted'
+);
+
+CREATE TYPE public.gender_type AS ENUM (
+    'Male',
+    'Female'
+);
+
+CREATE TYPE public.role_type AS ENUM (
+    'God Mode',
+    'Administrator',
+    'Developer',
+    'Moderator',
+    'Test User',
+    'Organization User',
+    'Donor',
+    'User'
+);
+
+CREATE TYPE public.title_type AS ENUM (
+    'Mr',
+    'Miss',
+    'Mrs',
+    'Doc',
+    'Lord',
+    'Master',
+    'Prof',
+    'Sir',
+    'Madam',
+    'Rev'
+);
+
+CREATE TABLE public.user_credentials (
+    id BIGSERIAL PRIMARY KEY,
+    user_name TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    role role_type NOT NULL DEFAULT 'User'::role_type,
+    account_status account_status_type NOT NULL DEFAULT 'Pending Verification'::account_status_type,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    last_login_at TIMESTAMPTZ NULL
+);
+
+CREATE TABLE public.user_profiles (
+    user_id BIGINT PRIMARY KEY,
+    title title_type,
+    email TEXT UNIQUE NOT NULL CHECK (email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$'),
+    first_name TEXT,
+    middle_name TEXT,
+    last_name TEXT,
+    date_of_birth DATE,
+    gender gender_type,
+    phone TEXT,
+    organization TEXT,
+    designation TEXT,
+    philosophy TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT fk_user_credentials
+        FOREIGN KEY(user_id)
+        REFERENCES public.user_credentials(id)
+        ON DELETE CASCADE
+);
+
+CREATE OR REPLACE FUNCTION public.trigger_set_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER set_timestamp_user_credentials
+BEFORE UPDATE ON public.user_credentials
+FOR EACH ROW
+EXECUTE FUNCTION public.trigger_set_timestamp();
+
+CREATE TRIGGER set_timestamp_user_profiles
+BEFORE UPDATE ON public.user_profiles
+FOR EACH ROW
+EXECUTE FUNCTION public.trigger_set_timestamp();
+
+CREATE INDEX idx_user_credentials_user_name ON public.user_credentials(user_name);
+CREATE INDEX idx_user_profiles_email ON public.user_profiles(email);
