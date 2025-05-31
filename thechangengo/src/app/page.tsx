@@ -1,8 +1,6 @@
 'use client';
 
 import Image from "next/image";
-import Navbar from "./components/navbar";
-import Footer from "./components/footer";
 import { useAuthRedirect } from "./hooks/useAuthRedirect";
 import { useRouter } from "next/navigation";
 
@@ -12,21 +10,20 @@ export default function Home() {
   const router = useRouter();
   const handleDonateClick = () => {
     if (typeof window !== "undefined" && sessionStorage.getItem("token")) {
-      router.push("/profile");
+      router.push("/donate");
     } else {
       router.push("/login");
     }
   };
   const handleVolunteerClick = () => {
     if (typeof window !== "undefined" && sessionStorage.getItem("token")) {
-      router.push("/profile");
+      router.push("/volunteer");
     } else {
       router.push("/login");
     }
   };
   return (
-    <div className="grid grid-rows-[auto_1fr_auto] items-center justify-items-center min-h-screen p-0 font-[family-name:var(--font-geist-sans)]">
-      <Navbar />
+    <div className="grid grid-rows-[auto_1fr_auto] items-center justify-items-center min-h-auto p-0 font-[family-name:var(--font-geist-sans)]">
       <main className="w-full relative">
         {/* Hero Image with Text Overlay */}
         <div className="relative w-full h-[70vh]">
@@ -63,7 +60,6 @@ export default function Home() {
           </button>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

@@ -1,11 +1,9 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Navbar from "../components/navbar";
-import Footer from "../components/footer";
-import { FaUserCircle, FaChevronDown, FaSignOutAlt, FaEdit, FaKey } from "react-icons/fa";
+// import { FaUserCircle, FaChevronDown, FaSignOutAlt, FaEdit, FaKey } from "react-icons/fa";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
-import { jwtDecode } from "jwt-decode";
+// import { jwtDecode } from "jwt-decode";
 
 export default function ProfilePage() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -68,24 +66,24 @@ export default function ProfilePage() {
     setDonate({ amount: "", method: "", message: "" });
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleLogout = () => {
     sessionStorage.removeItem("token");
     window.location.href = "/";
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-[family-name:var(--font-geist-sans)]">
-      <Navbar />
-      <main className="flex-1 bg-gray-50 py-8 px-4 flex flex-col items-center">
+    <div className="min-h-[80vh] flex flex-col font-[family-name:var(--font-geist-sans)]">
+      <main className="flex-1 bg-gray-50  px-4 flex flex-col items-center">
         {/* Top right visible Logout button */}
-        <div className="w-full max-w-4xl flex justify-end mb-4">
+        {/* <div className="w-full max-w-4xl flex justify-end mb-4">
           <button
             className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full shadow transition-all"
             onClick={handleLogout}
           >
             <FaSignOutAlt /> Logout
           </button>
-        </div>
+        </div> */}
         {/* Forms Section */}
         <div className="w-full max-w-4xl grid grid-cols-1 mt-20 md:grid-cols-2 gap-8">
           {/* Volunteer Form */}
@@ -182,7 +180,6 @@ export default function ProfilePage() {
           </form>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

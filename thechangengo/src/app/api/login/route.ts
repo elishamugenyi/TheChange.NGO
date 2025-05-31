@@ -46,6 +46,7 @@ export async function POST(req: Request) {
     //console.log("JWT Token:", token);
 
     return NextResponse.json({ success: true, token, role: data.role });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }

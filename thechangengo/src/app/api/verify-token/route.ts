@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
         const decoded = jwt.verify(token, secret) as { id: string; email: string; role: string};
         return NextResponse.json({ success: true, admin: decoded});
         
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
         return NextResponse.json({ success: false, error: 'Invalid token' }, { status: 401 });
     }

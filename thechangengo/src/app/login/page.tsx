@@ -1,72 +1,77 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
+// import { useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import Navbar from "../components/navbar";
-import Footer from "../components/footer";
+
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
-  const [ error, setError] = useState('');
-  const [ loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Handle login logic here
     //validate form
-    if(!formData.username || !formData.password) {
+    if (!formData.username || !formData.password) {
       setError('Please enter both username and password');
       return;
     }
-     setLoading(true);
-     setError('');
+    setLoading(true);
+    setError('');
 
     try {
       //send login credentials to API
       const response = await fetch('/api/login', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json', 
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
 
       const data = await response.json();
       //check if login was successful
-      if(data.success && data.token) {
-        //store token in local storage
-        sessionStorage.setItem('token', data.token);  
-        //redirect to profile page if role is User or to admin page if role is Administrator
-        router.push(data.role === 'User' ? '/profile' : '/admin');
+      if (data.success && data.token) {
+        //store token in sessionStorage
+        sessionStorage.setItem('token', data.token);
+        // router.refresh(); make the client refresh to show the logged in user.
+
+        //redirect to profile page if role is User or to admin page if role is 
+        router.push(data.role === 'User' ? '/' : '/admin');
+       
+        // The router.push will cause a page navigation/refresh,
+        // and the Navbar will then correctly pick up the token.
       } else {
         //display error message
         setError(data.message || 'Invalid username or password');
       }
-        
-      } catch (err) {
-        console.error(err);
-        setError('An error occurred while logging in');
-      } finally {
-        setLoading(false);
-      }
-    };
-    useEffect(() => {
-      sessionStorage.removeItem('token');
-    }, []);
+
+    } catch (err) {
+      console.error(err);
+      setError('An error occurred while logging in');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // REMOVE THIS useEffect: It's the cause of your problem
+  // useEffect(() => {
+  //   sessionStorage.removeItem('token');
+  // }, []);
+
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="relative w-20 h-20 mx-auto">
-          <Navbar />
-        </div>
         <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
           Welcome Back
         </h2>
@@ -86,11 +91,11 @@ export default function Login() {
                 <input
                   id="username"
                   name="username"
-                  type="username"
+                  type="text" // Changed type to "text" for username
                   autoComplete="username"
                   required
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500"
-                  value={formData.username}  
+                  value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                 />
               </div>
@@ -124,6 +129,12 @@ export default function Login() {
                 </button>
               </div>
             </div>
+
+            {error && (
+              <div className="text-red-600 text-sm text-center">
+                {error}
+              </div>
+            )}
 
             <div className="flex items-center justify-between">
               <div className="flex items-center">
@@ -172,7 +183,7 @@ export default function Login() {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Don't have an account?</span>
+                <span className="px-2 bg-white text-gray-500">Don&apos;t have an account?</span>
               </div>
             </div>
 
@@ -187,7 +198,6 @@ export default function Login() {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }
