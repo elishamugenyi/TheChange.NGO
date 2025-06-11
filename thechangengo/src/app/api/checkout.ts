@@ -1,32 +1,45 @@
-// pages/api/checkout.ts
-import { NextApiRequest, NextApiResponse } from 'next';
-import Stripe from 'stripe';
+// // app/api/checkout/route.ts
+// import Stripe from 'stripe';
+// import { NextRequest, NextResponse } from 'next/server';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2025-05-28.basil',
-});
+// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+//     apiVersion: '2025-05-28.basil',
+// });
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'POST') return res.status(405).end();
+// export async function POST(req: NextRequest) {
+//     const formData = await req.formData();
+//     const amount = parseFloat(formData.get('amount') as string);
+//     const price_id = formData.get('price_id') as string;
+//     const isRecurring = formData.get('isrecurring') === 'true'; // expects "true" or "false" string
 
-    const { priceId } = req.body;
+//     if (isNaN(amount) || amount < 10) {
+//         return NextResponse.json({ error: 'Minimum amount is $10' }, { status: 400 });
+//     }
 
-    try {
-        const session = await stripe.checkout.sessions.create({
-            mode: 'payment',
-            line_items: [
-                {
-                    price: priceId,
-                    quantity: 1,
-                },
-            ],
-            success_url: 'https://yourdomain.com/success',
-            cancel_url: 'https://yourdomain.com/cancel',
-        });
+//     const amountInCents = Math.round(amount * 100);
 
-        return res.status(200).json({ url: session.url });
-    } catch (error: any) {
-        console.error(error);
-        return res.status(500).json({ error: error.message });
-    }
-}
+//     // Create dynamic price
+//     const price = await stripe.prices.create({
+//         currency: 'usd',
+//         unit_amount: amountInCents,
+//         recurring: isRecurring ? { interval: 'month' } : undefined,
+//         product_data: {
+//             name: `Donation - ${isRecurring ? 'Monthly' : 'One-Time'} - ${price_id}`,
+//         },
+//     });
+
+//     // Create the appropriate Checkout session
+//     const session = await stripe.checkout.sessions.create({
+//         mode: isRecurring ? 'subscription' : 'payment',
+//         line_items: [
+//             {
+//                 price: price.id,
+//                 quantity: 1,
+//             },
+//         ],
+//         success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/thank-you`,
+//         cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/donate`,
+//     });
+
+//     return NextResponse.redirect(session.url!, { status: 303 });
+// }

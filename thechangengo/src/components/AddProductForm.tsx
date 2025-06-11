@@ -1,78 +1,98 @@
-'use client'
+'use client';
 
-import React, { useState, FormEvent } from 'react';
+import { useState } from 'react';
 
-export default function AddProductForm() {
-    const [name, setName] = useState<string>('');
-    const [description, setDescription] = useState<string>('');
-    const [price, setPrice] = useState<string>('');
+export default function AddCampaignForm() {
+    const [form, setForm] = useState({
+        name: '',
+        description: '',
+        price: '',
+        isRecurring: false,
+    });
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    const [loading, setLoading] = useState(false);
+    const [result, setResult] = useState<any>(null);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value, type, checked } = e.target;
+        setForm(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value,
+        }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setLoading(true);
 
-        try {
-            const response = await fetch('/api/add-product', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name,
-                    description,
-                    price: parseFloat(price),
-                }),
-            });
+        const price = Math.floor(Number(form.price)); // sanitize input
 
-            const data = await response.json();
+        const res = await fetch('/api/campaigns', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: form.name,
+                description: form.description,
+                price,
+                isRecurring: form.isRecurring,
+            }),
+        });
 
-            if (response.ok) {
-                alert('Product added successfully!');
-                setName('');
-                setDescription('');
-                setPrice('');
-            } else {
-                throw new Error(data.message || 'Something went wrong');
-            }
-        } catch (error: any) {
-            alert('Error adding product: ' + error.message);
-        }
+        const data = await res.json();
+        setResult(data);
+        setLoading(false);
     };
 
     return (
-        <form onSubmit= { handleSubmit } >
-        <div>
-        <label htmlFor="name" > Product Name: </label>
-            < input
-    type = "text"
-    id = "name"
-    value = { name }
-    onChange = {(e) => setName(e.target.value)
-}
-required
-    />
-    </div>
+        <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded shadow max-w-md mx-auto">
+            <h2 className="text-xl font-bold">Create a New Campaign</h2>
 
-    < div >
-    <label htmlFor="description" > Description: </label>
-        < textarea
-id = "description"
-value = { description }
-onChange = {(e) => setDescription(e.target.value)}
-required
-    />
-    </div>
+            <input
+                type="text"
+                name="name"
+                placeholder="Campaign name"
+                onChange={handleChange}
+                className="w-full border p-2 rounded"
+                required
+            />
 
-    < div >
-    <label htmlFor="price" > Price: </label>
-        < input
-type = "number"
-id = "price"
-value = { price }
-onChange = {(e) => setPrice(e.target.value)}
-step = "0.01"
-required
-    />
-    </div>
+            <textarea
+                name="description"
+                placeholder="Description"
+                onChange={handleChange}
+                className="w-full border p-2 rounded"
+                required
+            />
 
-    < button type = "submit" > Add Product </button>
+            <input
+                type="number"
+                name="price"
+                placeholder="Amount in USD (e.g. 25)"
+                min="10"
+                onChange={handleChange}
+                className="w-full border p-2 rounded"
+                required
+            />
+
+            <label className="flex items-center space-x-2">
+                {/* <input
+                    type="checkbox"
+                    name="isRecurring"
+                    checked={form.isRecurring}
+                    onChange={handleChange}
+                /> */}
+                <span>Recurring Monthly Donation Is Under Development Only One Time Payment Campaigns Are In Progress</span>
+            </label>
+
+            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded" disabled={loading}>
+                {loading ? 'Creating...' : 'Create Campaign'}
+            </button>
+
+            {result && (
+                <pre className="mt-4 bg-gray-100 p-2 text-sm overflow-x-auto">
+                    {JSON.stringify(result, null, 2)}
+                </pre>
+            )}
         </form>
-  );
+    );
 }
