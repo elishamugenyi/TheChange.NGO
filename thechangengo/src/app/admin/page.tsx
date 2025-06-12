@@ -3,8 +3,17 @@
 import { useState, useEffect } from "react";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import React from "react";
+import ProtectedRoute from "../defaultcomponents/protectedRoute";
 
 export default function AdminDashboard() {
+  return (
+    <ProtectedRoute>
+      <AdminDashboardContent />
+    </ProtectedRoute>
+  );
+}
+
+function AdminDashboardContent() {
   useAuthRedirect("Administrator");
 
   const [users, setUsers] = useState([]);
@@ -21,6 +30,17 @@ export default function AdminDashboard() {
   const [sideContent, setSideContent] = useState<any[]>([]);
   const [sideContentLoading, setSideContentLoading] = useState(true);
   const [sideContentError, setSideContentError] = useState("");
+
+  const [selectedCategory, setSelectedCategory] = useState("Dashboard (overview)");
+
+  const categories = [
+    "Dashboard (overview)",
+    "User Config",
+    "Payment Config",
+    "Security",
+    "Privacy",
+    "Legal",
+  ];
 
   useEffect(() => {
     async function fetchUsers() {
@@ -57,17 +77,6 @@ export default function AdminDashboard() {
     }
     fetchContent();
   }, []);
-
-  const [selectedCategory, setSelectedCategory] = useState("Dashboard (overview)");
-
-  const categories = [
-    "Dashboard (overview)",
-    "User Config",
-    "Payment Config",
-    "Security",
-    "Privacy",
-    "Legal",
-  ];
 
   // Open edit modal and populate form
   const handleEdit = (user: any) => {

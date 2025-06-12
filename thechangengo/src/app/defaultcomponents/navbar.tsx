@@ -31,15 +31,13 @@ export default function Navbar() {
   //   const { setTheme } = useTheme()  
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    const checkLoginStatus = () => {
       const token = sessionStorage.getItem("token");
       if (token) {
         const decoded = decodeJwt(token);
         if (decoded && decoded.user_name) {
           setLoggedIn(true);
           setUsername(decoded.user_name);
-
-          // Extract roles - adjust based on your JWT structure
           const roles = decoded.roles || decoded.role || [];
           const allowedRoles = ["God Mode", "Administrator", "Developer", "Moderator"];
           if (Array.isArray(roles)) {
@@ -48,8 +46,18 @@ export default function Navbar() {
             setHasAdminRole(allowedRoles.includes(roles));
           }
         }
+      } else {
+        setLoggedIn(false);
+        setUsername(null);
+        setHasAdminRole(false);
       }
-    }
+    };
+
+    checkLoginStatus();
+    window.addEventListener('storage', checkLoginStatus);
+    return () => {
+      window.removeEventListener('storage', checkLoginStatus);
+    };
   }, []);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -132,9 +140,9 @@ export default function Navbar() {
         
 
 
-        {!loggedIn && <NavLink href="/login">Login</NavLink>}
-
-        {loggedIn && (
+        {!loggedIn ? (
+          <NavLink href="/login">Login</NavLink>
+        ) : (
           <div className="relative ml-4">
             <button
               className="flex items-center text-purple-900 hover:text-purple-700 focus:outline-none"
