@@ -43,13 +43,9 @@ export default function Login() {
       if (data.success && data.token) {
         //store token in sessionStorage
         sessionStorage.setItem('token', data.token);
-        // router.refresh(); make the client refresh to show the logged in user.
-
-        //redirect to profile page if role is User or to admin page if role is 
-        router.push(data.role === 'User' ? '/' : '/admin');
-       
-        // The router.push will cause a page navigation/refresh,
-        // and the Navbar will then correctly pick up the token.
+        
+        // Force a page refresh to update the navbar
+        window.location.href = data.role === 'User' ? '/' : '/admin';
       } else {
         //display error message
         setError(data.message || 'Invalid username or password');
