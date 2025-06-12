@@ -3,7 +3,7 @@ import { supabase } from "../../../lib/db";
 
 export async function GET() {
     try {
-        const { data, error } = await supabase.from('page_content').select('*').neq('title', 'User Configuration');
+        const { data, error } = await supabase.from('sidebar_items').select('*');/*.neq('title', 'User Configuration');*/
         if (error) {
             return NextResponse.json({ error: 'Failed to fetch page content' }, { status: 500 });
         }
